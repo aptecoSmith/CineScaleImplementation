@@ -1,8 +1,8 @@
 ### Requirements
 Add a models folder to your root, place two models there\
 expecting:\
-camera_level_and_angle.ckpt - renamed from original download, from https://cinescale.github.io/camera_al/#get-the-model\
-model_shotscale_967.h5 from https://cinescale.github.io/shotscale/#get-the-model\
+camera_level_and_angle.ckpt - renamed from original download, from https://cinescale.github.io/camera_al/#get-the-model \
+model_shotscale_967.h5 from https://cinescale.github.io/shotscale/#get-the-model \
 
 ### Output
 App creates three files per image\
