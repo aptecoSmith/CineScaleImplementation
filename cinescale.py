@@ -24,11 +24,11 @@ class CineScale:
 
     def load_resnet_model(self):
         # Determine the device to load the model on
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # Load the ResNet model from the checkpoint file on the determined device
         model = ResNet(num_angle_classes=5, num_level_classes=6)
-        checkpoint = torch.load(self.angle_and_level_model_path, map_location=device)
+        checkpoint = torch.load(self.angle_and_level_model_path, map_location=self.device)
 
         # Extract the state dict from the checkpoint if it exists
         state_dict = checkpoint.get('state_dict', checkpoint)
@@ -39,8 +39,8 @@ class CineScale:
         model.eval()
 
         # Move the model to the device if it's not already there
-        if device.type == 'cuda':
-            model = model.to(device)
+        if self.device.type == 'cuda':
+            model = model.to(self.device)
 
         return model
 
@@ -49,6 +49,11 @@ class CineScale:
         level_classes = ['Aerial level', 'Eye level', 'Shoulder level', 'Hip level', 'Knee level', 'Ground level']
         img = Image.open(image_path)
         img_tensor = self.transform(img).unsqueeze(0)
+
+        # img_tensor to device
+        if self.device.type == 'cuda':
+            img_tensor = img_tensor.to(self.device)
+
         with torch.no_grad():
             angle_logits, level_logits = self.angle_and_level_model(img_tensor)
         angle_pred = torch.argmax(angle_logits, dim=1).item()
