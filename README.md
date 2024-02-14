@@ -4,7 +4,7 @@ camera_level_and_angle.ckpt - renamed from model.ckpt from https://cinescale.git
 model_shotscale_967.h5 from https://cinescale.github.io/shotscale/#get-the-model
 
 ### Output
-App creates three files per image \
+App creates three files per image
 + .angle.txt
 + .level.txt
 + .shot.txt
