@@ -77,8 +77,19 @@ class CineScale:
     def predict_shot_scale_from_image(self, image_path):
         # Define the class labels
         #id2cls = ['Close Shot', 'Medium Shot', 'Long Shot']
-        id2cls = ['Close Shot', 'Medium Shot', 'Long Shot','unknown','unknown','unknown','unknown','unknown','unknown','unknown']
-
+        # id2cls = ['Close Shot', 'Medium Shot', 'Long Shot','unknown','unknown','unknown','unknown','unknown','unknown','unknown']
+        # categories from https://cinescale.github.io/shotscale/#get-the-model Dataset part
+        id2cls = [
+            'Extreme Close Up (ECU)',
+            'Close Up (CU)',
+            'Medium Close Up (MCU)',
+            'Medium Shot (MS)',
+            'Medium Long Shot (MLS)',
+            'Long Shot (LS)',
+            'Extreme Long Shot (ELS)',
+            'Foreground Shot (FS)',
+            'and Insert Shots (IS)',
+        ]
         # Open the image
         img = Image.open(image_path)
 
