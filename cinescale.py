@@ -9,8 +9,11 @@ import numpy as np
 
 class CineScale:
     def __init__(self, angle_and_level_model_path='camera_level_and_angle.ckpt', shot_scale_model_path='model_shotscale_967.h5'):
+        # Determine the device to load the model on
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
         self.angle_and_level_model_path = angle_and_level_model_path
-        self.angle_and_level_model = self.load_resnet_model()
+        self.angle_and_level_model = self.load_resnet_model(self.device)
 
         self.shot_scale_model_path = shot_scale_model_path
         self.shot_scale_model = self.load_h5_model()
@@ -22,9 +25,7 @@ class CineScale:
             transforms.Normalize(mean=[0.485,   0.456,   0.406], std=[0.229,   0.224,   0.225]),
         ])
 
-    def load_resnet_model(self):
-        # Determine the device to load the model on
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    def load_resnet_model(self,device):
 
         # Load the ResNet model from the checkpoint file on the determined device
         model = ResNet(num_angle_classes=5, num_level_classes=6)
@@ -39,8 +40,8 @@ class CineScale:
         model.eval()
 
         # Move the model to the device if it's not already there
-        if self.device.type == 'cuda':
-            model = model.to(self.device)
+        if device.type == 'cuda':
+            model = model.to(device)
 
         return model
 
