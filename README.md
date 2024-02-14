@@ -6,9 +6,9 @@ model_shotscale_967.h5 from https://cinescale.github.io/shotscale/#get-the-model
 
 ### Output
 App creates three files per image
-.angle.txt
-.level.txt
-.shot.txt
++.angle.txt
++.level.txt
++.shot.txt
 
 ### Example
 
