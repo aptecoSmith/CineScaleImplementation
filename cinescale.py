@@ -80,15 +80,15 @@ class CineScale:
         # id2cls = ['Close Shot', 'Medium Shot', 'Long Shot','unknown','unknown','unknown','unknown','unknown','unknown','unknown']
         # categories from https://cinescale.github.io/shotscale/#get-the-model Dataset part
         id2cls = [
-            'Extreme Close Up (ECU)',
-            'Close Up (CU)',
-            'Medium Close Up (MCU)',
-            'Medium Shot (MS)',
-            'Medium Long Shot (MLS)',
-            'Long Shot (LS)',
-            'Extreme Long Shot (ELS)',
-            'Foreground Shot (FS)',
-            'and Insert Shots (IS)',
+            'Extreme Close Up',
+            'Close Up',
+            'Medium Close Up',
+            'Medium Shot',
+            'Medium Long Shot',
+            'Long Shot',
+            'Extreme Long Shot',
+            'Foreground Shot',
+            'Insert Shot',
         ]
         # Open the image
         img = Image.open(image_path)
