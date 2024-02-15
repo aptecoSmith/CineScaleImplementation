@@ -9,8 +9,11 @@ import numpy as np
 
 class CineScale:
     def __init__(self, angle_and_level_model_path='camera_level_and_angle.ckpt', shot_scale_model_path='model_shotscale_967.h5'):
+        # Determine the device to load the model on
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
         self.angle_and_level_model_path = angle_and_level_model_path
-        self.angle_and_level_model = self.load_resnet_model()
+        self.angle_and_level_model = self.load_resnet_model(self.device)
 
         self.shot_scale_model_path = shot_scale_model_path
         self.shot_scale_model = self.load_h5_model()
@@ -22,13 +25,11 @@ class CineScale:
             transforms.Normalize(mean=[0.485,   0.456,   0.406], std=[0.229,   0.224,   0.225]),
         ])
 
-    def load_resnet_model(self):
-        # Determine the device to load the model on
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    def load_resnet_model(self,device):
 
         # Load the ResNet model from the checkpoint file on the determined device
         model = ResNet(num_angle_classes=5, num_level_classes=6)
-        checkpoint = torch.load(self.angle_and_level_model_path, map_location=device)
+        checkpoint = torch.load(self.angle_and_level_model_path, map_location=self.device)
 
         # Extract the state dict from the checkpoint if it exists
         state_dict = checkpoint.get('state_dict', checkpoint)
@@ -49,6 +50,11 @@ class CineScale:
         level_classes = ['Aerial level', 'Eye level', 'Shoulder level', 'Hip level', 'Knee level', 'Ground level']
         img = Image.open(image_path)
         img_tensor = self.transform(img).unsqueeze(0)
+
+        # img_tensor to device
+        if self.device.type == 'cuda':
+            img_tensor = img_tensor.to(self.device)
+
         with torch.no_grad():
             angle_logits, level_logits = self.angle_and_level_model(img_tensor)
         angle_pred = torch.argmax(angle_logits, dim=1).item()
@@ -71,8 +77,19 @@ class CineScale:
     def predict_shot_scale_from_image(self, image_path):
         # Define the class labels
         #id2cls = ['Close Shot', 'Medium Shot', 'Long Shot']
-        id2cls = ['Close Shot', 'Medium Shot', 'Long Shot','unknown','unknown','unknown','unknown','unknown','unknown','unknown']
-
+        # id2cls = ['Close Shot', 'Medium Shot', 'Long Shot','unknown','unknown','unknown','unknown','unknown','unknown','unknown']
+        # categories from https://cinescale.github.io/shotscale/#get-the-model Dataset part
+        id2cls = [
+            'Extreme Close Up',
+            'Close Up',
+            'Medium Close Up',
+            'Medium Shot',
+            'Medium Long Shot',
+            'Long Shot',
+            'Extreme Long Shot',
+            'Foreground Shot',
+            'Insert Shot',
+        ]
         # Open the image
         img = Image.open(image_path)
 
